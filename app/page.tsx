@@ -117,23 +117,47 @@ export default function Home() {
       </div>
 
       <div className="max-w-2xl mx-auto prose">
-        <h2>How to use:</h2>
+        <h2>How to Use:</h2>
         <ol>
-          <li>Export your ChatGPT conversations from your OpenAI account:
+          <li>
+            🛠 <strong>Export Your ChatGPT Conversations</strong>
             <ul>
-              <li><span role="img" aria-label="settings">⚙️</span> Go to Settings → Data controls → Export data</li>
-              <li><span role="img" aria-label="email">📧</span> Wait for the export email</li>
-              <li><span role="img" aria-label="download">⬇️</span> Download and unzip the export</li>
+              <li>⚙️ Go to <strong>Settings</strong> → <strong>Data Controls</strong> → <strong>Export Data</strong></li>
+              <li>📧 Check your email faster than you check your notifications.</li>
             </ul>
           </li>
-          <li>Select your timezone to ensure accurate time representation</li>
-          <li>Choose the year you want to visualize</li>
-          <li>Upload the conversations.json file from your export</li>
+          <li>
+            📂 <strong>Unzip the Export</strong>
+            <ul>
+              <li>🗂 Open the zip file like you're unlocking a treasure chest.</li>
+            </ul>
+          </li>
+          <li>
+            🕒 <strong>Select Your Timezone</strong>
+            <ul>
+              <li>🕰 Don’t let ChatGPT think you’re living on Mars.</li>
+            </ul>
+          </li>
+          <li>
+            📅 <strong>Choose the Year to Visualize</strong>
+            <ul>
+              <li>🎉 Relive your most hilarious or deep AI conversations.</li>
+              <li>(But hey, use ChatGPT a bit first 😬 if you want an actual graph!)</li>
+            </ul>
+          </li>
+          <li>
+            📤 <strong>Upload the <code>conversations.json</code> File</strong>
+            <ul>
+              <li>🖱 Drop it like it’s hot (or just click "Upload").</li>
+            </ul>
+          </li>
         </ol>
-        
-        <h2>Privacy Note</h2>
+
+        <h2>🎭 Privacy Note:</h2>
         <p>
-          All data processing happens in your browser. Your conversation data is never sent to any server.
+          Your data stays in your browser!<br />
+          No shady uploads to some mystery server.<br />
+          Even ChatGPT won’t know your secrets. 🤫
         </p>
       </div>
     </div>

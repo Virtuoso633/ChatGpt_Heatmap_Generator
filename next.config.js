@@ -3,6 +3,9 @@ const path = require('path');
 
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    appDir: true, // Enable experimental features for Turbopack
+  },
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,

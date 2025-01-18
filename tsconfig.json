@@ -18,7 +18,7 @@
         "name": "next"
       }
     ],
-    "baseUrl": "/Users/sanket/Documents/Chat-heatmap/chat-heatmap/",  // Ensure this line is uncommented
+    "baseUrl": ".",  // Ensure this line is uncommented
     "paths": {
       "@/*": ["./app/*"]  // Correctly maps '@/' to './app/*'
     }

@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '/Users/sanket/Documents/Chat-heatmap/chat-heatmap/app/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -9,8 +9,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "/Users/sanket/Documents/Chat-heatmap/chat-heatmap/app/components/ui/select";
-import { Button } from '/Users/sanket/Documents/Chat-heatmap/chat-heatmap/app/components/ui/button';
+} from "@/components/ui/select";
+import { Button } from '@/components/ui/button';
 
 interface Conversation {
   create_time: number;

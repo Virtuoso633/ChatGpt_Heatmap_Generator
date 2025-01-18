@@ -1,5 +1,5 @@
 import * as React from "react"
-import { cn } from "/Users/sanket/Documents/Chat-heatmap/chat-heatmap/lib/utils"
+import { cn } from "@/lib/utils"
 
 const Button = React.forwardRef<HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement>

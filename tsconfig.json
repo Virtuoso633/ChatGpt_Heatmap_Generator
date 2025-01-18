@@ -20,7 +20,8 @@
     ],
     "baseUrl": ".",  // Ensure this line is uncommented
     "paths": {
-      "@/*": ["./app/*"]  // Correctly maps '@/' to './app/*'
+      "@/*": ["./app/*"],
+      "@/lib/*": ["./lib/*"]  
     }
   },
   "include": [

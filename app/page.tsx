@@ -129,13 +129,13 @@ export default function Home() {
           <li>
             📂 <strong>Unzip the Export</strong>
             <ul>
-              <li>🗂 Open the zip file like you're unlocking a treasure chest.</li>
+              <li>🗂 Open the zip file like you&rsquo;re unlocking a treasure chest.</li>
             </ul>
           </li>
           <li>
             🕒 <strong>Select Your Timezone</strong>
             <ul>
-              <li>🕰 Don’t let ChatGPT think you’re living on Mars.</li>
+              <li>🕰 Don&rsquo;t let ChatGPT think you&rsquo;re living on Mars.</li>
             </ul>
           </li>
           <li>
@@ -148,7 +148,7 @@ export default function Home() {
           <li>
             📤 <strong>Upload the <code>conversations.json</code> File</strong>
             <ul>
-              <li>🖱 Drop it like it’s hot (or just click "Upload").</li>
+              <li>🖱 Drop it like it&rsquo;s hot (or just click &ldquo;Upload&rdquo;).</li>
             </ul>
           </li>
         </ol>
@@ -157,7 +157,7 @@ export default function Home() {
         <p>
           Your data stays in your browser!<br />
           No shady uploads to some mystery server.<br />
-          Even ChatGPT won’t know your secrets. 🤫
+          Even ChatGPT won&rsquo;t know your secrets. 🤫
         </p>
       </div>
     </div>

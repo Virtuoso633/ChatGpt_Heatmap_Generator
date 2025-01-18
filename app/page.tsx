@@ -159,6 +159,10 @@ export default function Home() {
           No shady uploads to some mystery server.<br />
           Even ChatGPT won&rsquo;t know your secrets. 🤫
         </p>
+
+        <footer className="text-center mt-8 text-gray-500">
+          Made with ❤️ by <strong>Developer Sanket</strong>
+        </footer>
       </div>
     </div>
   )

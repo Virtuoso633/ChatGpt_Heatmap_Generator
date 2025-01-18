@@ -414,7 +414,8 @@ const HeatmapGenerator: React.FC = () => {
     'US/Eastern',
     'UTC',
     'Europe/London',
-    'Asia/Tokyo'
+    'Asia/Tokyo',
+    'Asia/Kolkata'
   ] as const;
 
   return (

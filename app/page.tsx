@@ -106,7 +106,7 @@ export default function Home() {
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight">ChatGPT Usage Heatmap</h1>
+        <h1 className="text-4xl font-bold tracking-tight text-black">ChatGPT Usage Heatmap</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Visualize your ChatGPT conversation patterns. Upload your conversations.json file to generate a detailed heatmap of your usage.
         </p>
@@ -121,9 +121,9 @@ export default function Home() {
         <ol>
           <li>Export your ChatGPT conversations from your OpenAI account:
             <ul>
-              <li>Go to Settings → Data controls → Export data</li>
-              <li>Wait for the export email</li>
-              <li>Download and unzip the export</li>
+              <li><span role="img" aria-label="settings">⚙️</span> Go to Settings → Data controls → Export data</li>
+              <li><span role="img" aria-label="email">📧</span> Wait for the export email</li>
+              <li><span role="img" aria-label="download">⬇️</span> Download and unzip the export</li>
             </ul>
           </li>
           <li>Select your timezone to ensure accurate time representation</li>

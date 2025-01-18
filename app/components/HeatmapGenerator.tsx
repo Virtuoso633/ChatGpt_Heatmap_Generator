@@ -1,100 +1,148 @@
-import React, { useState, useEffect } from 'react';
+"use client"
+import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
 
-const HeatmapGenerator = () => {
+interface Conversation {
+  create_time: number;
+}
+
+interface Stats {
+  total: number;
+  maxDate: string | null;
+  maxCount: number;
+}
+
+const HeatmapGenerator: React.FC = () => {
   const [timezone, setTimezone] = useState('US/Pacific');
-  const [year, setYear] = useState(new Date().getFullYear());
-  const [heatmapData, setHeatmapData] = useState(null);
-  const [stats, setStats] = useState({ total: 0, maxDate: null, maxCount: 0 });
+  const currentYear = new Date().getFullYear();
+  const [year, setYear] = useState(currentYear);
+  const [heatmapData, setHeatmapData] = useState<number[][]| null>(null);
+  const [stats, setStats] = useState<Stats>({ total: 0, maxDate: null, maxCount: 0 });
+
+  // Generate range of available years
+  const yearRange = Array.from(
+    { length: currentYear - 2021 }, 
+    (_, i) => 2022 + i
+  );
   
-  // Generate weeks array for the entire year
-  const getWeeksArray = (year) => {
-    const startDate = new Date(year, 0, 1);
-    const endDate = new Date(year, 11, 31);
-    const weeks = [];
-    let currentDate = startDate;
-    
-    while (currentDate <= endDate) {
-      const week = Math.floor((currentDate - startDate) / (7 * 24 * 60 * 60 * 1000));
-      if (!weeks.includes(week)) weeks.push(week);
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-    return weeks;
-  };
+  const processConversations = (jsonData: Conversation[]) => {
+    try {
+      const startDate = new Date(Date.UTC(year, 0, 1));
+      let totalConvos = 0;
+      let maxCount = 0;
+      let maxDate: Date = new Date();
 
-  const processConversations = (jsonData) => {
-    const dateCountMap = new Map();
-    const startDate = new Date(year, 0, 1);
-    let totalConvos = 0;
-    let maxCount = 0;
-    let maxDate = null;
-
-    // Initialize empty data structure
-    const yearData = Array(53).fill().map(() => Array(7).fill(0));
-    
-    jsonData.forEach(conv => {
-      const timestamp = conv.create_time * 1000; // Convert to milliseconds
-      const date = new Date(timestamp);
+      // Initialize empty data structure (53 weeks × 7 days)
+      const yearData = Array(53).fill(null).map(() => Array(7).fill(0));
       
-      if (date.getFullYear() === year) {
-        const week = Math.floor((date - startDate) / (7 * 24 * 60 * 60 * 1000));
-        const dayOfWeek = (date.getDay() + 6) % 7; // Monday = 0, Sunday = 6
-        
-        yearData[week][dayOfWeek]++;
-        totalConvos++;
-        
-        // Track maximum
-        if (yearData[week][dayOfWeek] > maxCount) {
-          maxCount = yearData[week][dayOfWeek];
-          maxDate = date;
-        }
-      }
-    });
-
-    setHeatmapData(yearData);
-    setStats({
-      total: totalConvos,
-      maxDate: maxDate?.toLocaleDateString(),
-      maxCount: maxCount
-    });
-  };
-
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
+      jsonData.forEach(conv => {
         try {
-          const json = JSON.parse(e.target.result);
-          processConversations(json);
+          const timestamp = conv.create_time * 1000;
+          const date = new Date(timestamp);
+          
+          if (date.getFullYear() === year) {
+            const weekNumber = Math.floor((date.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
+            
+            if (weekNumber >= 0 && weekNumber < 53) {
+              const dayOfWeek = (date.getDay() + 6) % 7;
+              
+              if (yearData[weekNumber]) {
+                yearData[weekNumber][dayOfWeek]++;
+                totalConvos++;
+                
+                if (yearData[weekNumber][dayOfWeek] > maxCount) {
+                  maxCount = yearData[weekNumber][dayOfWeek];
+                  maxDate = date;
+                }
+              }
+            }
+          }
         } catch (error) {
-          console.error('Error parsing JSON:', error);
+          console.error('Error processing conversation:', error);
         }
-      };
-      reader.readAsText(file);
+      });
+
+      setHeatmapData(yearData);
+      setStats({
+        total: totalConvos,
+        maxDate: maxDate?.toLocaleDateString(undefined, {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        }),
+        maxCount: maxCount
+      });
+    } catch (error) {
+      console.error('Error in processConversations:', error);
+      setHeatmapData(null);
+      setStats({ total: 0, maxDate: null, maxCount: 0 });
     }
   };
 
-  // Get color based on value using a green color scheme similar to the Python version
-  const getColor = (value) => {
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const result = e.target?.result;
+        if (typeof result === 'string') {
+          const json = JSON.parse(result);
+          processConversations(json);
+        }
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+        setHeatmapData(null);
+        setStats({ total: 0, maxDate: null, maxCount: 0 });
+      }
+    };
+    reader.onerror = () => {
+      console.error('Error reading file');
+    };
+    reader.readAsText(file);
+  };
+
+  const getColor = (value: number): string => {
     if (value === 0) return '#f0f0f0';
-    const intensity = Math.min(value / (stats.maxCount * 0.9), 1);
+    const maxValue = stats.maxCount || 1;
+    const intensity = Math.min(Math.max(value / (maxValue * 0.9), 0), 1);
     const green = Math.floor(intensity * 255);
     return `rgb(0, ${green}, 0)`;
   };
 
-  // Get month labels
   const getMonthLabels = () => {
-    const months = [];
+    const months: { label: string; week: number }[] = [];
+    const startDate = new Date(Date.UTC(year, 0, 1));
+    
     for (let month = 0; month < 12; month++) {
-      const date = new Date(year, month, 1);
-      const week = Math.floor((date - new Date(year, 0, 1)) / (7 * 24 * 60 * 60 * 1000));
-      months.push({ label: date.toLocaleString('default', { month: 'short' }), week });
+      const date = new Date(Date.UTC(year, month, 1));
+      const week = Math.floor((date.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
+      months.push({
+        label: date.toLocaleString('default', { month: 'short' }),
+        week
+      });
     }
     return months;
   };
+
+  const timezones = [
+    'US/Pacific',
+    'US/Eastern',
+    'UTC',
+    'Europe/London',
+    'Asia/Tokyo'
+  ] as const;
 
   return (
     <Card className="w-full max-w-6xl">
@@ -103,36 +151,50 @@ const HeatmapGenerator = () => {
           {year} ChatGPT Conversation Heatmap
           {stats.total > 0 && (
             <span className="block text-sm text-gray-600 mt-2">
-              Total: {stats.total} conversations
-              {stats.maxDate && ` • Most active day: ${stats.maxDate} with ${stats.maxCount} conversations`}
+              Total: {stats.total.toLocaleString()} conversations
+              {stats.maxDate && ` • Most active day: ${stats.maxDate} with ${stats.maxCount.toLocaleString()} conversations`}
             </span>
           )}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div className="flex gap-4 items-center">
-            <Select value={timezone} onValueChange={setTimezone}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Select timezone" />
-              </SelectTrigger>
-              <SelectContent>
-                {['US/Pacific', 'US/Eastern', 'UTC', 'Europe/London', 'Asia/Tokyo'].map(tz => (
-                  <SelectItem key={tz} value={tz}>{tz}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex gap-4 items-center flex-wrap">
+            <div className="w-48">
+              <Select defaultValue={timezone} onValueChange={setTimezone}>
+                <SelectTrigger id="timezone">
+                  <SelectValue placeholder="Select timezone" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                  <SelectLabel>Timezones</SelectLabel>
+                    {timezones.map(tz => (
+                      <SelectItem key={tz} value={tz}>
+                        {tz}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
             
-            <Select value={year.toString()} onValueChange={(v) => setYear(parseInt(v))}>
-              <SelectTrigger className="w-32">
-                <SelectValue placeholder="Select year" />
-              </SelectTrigger>
-              <SelectContent>
-                {[2022, 2023, 2024, 2025].map(y => (
-                  <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="w-32">
+              <Select defaultValue={year.toString()} onValueChange={(value) => setYear(parseInt(value, 10))}>
+                <SelectTrigger id="year">
+                  <SelectValue placeholder="Select year" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                  <SelectLabel>Timezones</SelectLabel>
+                    {yearRange.map(y => (
+                      <SelectItem key={y} value={y.toString()}>
+                        {y}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
             
             <input
               type="file"
@@ -142,7 +204,7 @@ const HeatmapGenerator = () => {
               id="file-upload"
             />
             <Button
-              onClick={() => document.getElementById('file-upload').click()}
+              onClick={() => document.getElementById('file-upload')?.click()}
               className="w-48"
             >
               Upload conversations.json
@@ -153,7 +215,7 @@ const HeatmapGenerator = () => {
             <div className="relative overflow-x-auto">
               <div className="flex">
                 <div className="w-16">
-                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => (
+                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
                     <div key={day} className="h-8 flex items-center justify-end pr-2 text-sm">
                       {day}
                     </div>
@@ -167,14 +229,15 @@ const HeatmapGenerator = () => {
                           {week.map((value, dayIndex) => (
                             <div
                               key={`${weekIndex}-${dayIndex}`}
-                              className="h-8 border border-gray-200 relative"
+                              className="h-8 border border-gray-200 relative group"
                               style={{ backgroundColor: getColor(value) }}
                             >
-                              {value > 0 && (
-                                <span className="absolute inset-0 flex items-center justify-center text-xs">
-                                  {value}
-                                </span>
-                              )}
+                              <div className="absolute inset-0 flex items-center justify-center text-xs">
+                                {value > 0 && value}
+                              </div>
+                              <div className="hidden group-hover:block absolute z-10 bg-black text-white p-2 rounded text-xs -top-8 left-1/2 transform -translate-x-1/2">
+                                {value} conversations
+                              </div>
                             </div>
                           ))}
                         </div>

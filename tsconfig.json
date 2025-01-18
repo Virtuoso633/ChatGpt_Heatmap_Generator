@@ -18,10 +18,18 @@
         "name": "next"
       }
     ],
+    "baseUrl": "/Users/sanket/Documents/Chat-heatmap/chat-heatmap/",  // Ensure this line is uncommented
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./app/*"]  // Correctly maps '@/' to './app/*'
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tailwind.config.js", "next.config.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "tailwind.config.js",
+    "next.config.js"
+  ],
   "exclude": ["node_modules"]
 }
